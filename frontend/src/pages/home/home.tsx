@@ -1,23 +1,28 @@
-import { useState } from "react";
-import { Layout } from "antd";
+import { Layout, Pagination } from "antd";
 import CategoryNav from "../../components/CategoryNav/CategoryNav";
+import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import { products } from "../../data/product";
+import { useProductFilters } from "../../hooks/useProductFilters";
 import "./home.scss";
-import ProductGrid from "../../components/productgrid/productgrid";
+import SortFilterBar from "../../components/sortfilterbar/sortFilterBar";
 
 const { Header, Content, Footer } = Layout;
 
-const categories = ["All", ...new Set(products.map(p => p.category))];
-
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-
-  const filteredProducts =
-    selectedCategory === "All"
-      ? products
-      : products.filter(
-          (product) => product.category === selectedCategory
-        );
+  const {
+    categories,
+    paginatedProducts,
+    total,
+    currentPage,
+    pageSize,
+    setCurrentPage,
+    selectedCategory,
+    setSelectedCategory,
+    sortOrder,
+    setSortOrder,
+    priceRange,
+    setPriceRange,
+  } = useProductFilters(products);
 
   return (
     <Layout className="home-layout">
@@ -31,9 +36,24 @@ const Home = () => {
             onSelect={setSelectedCategory}
           />
 
+          <SortFilterBar
+            sortOrder={sortOrder}
+            onSortChange={setSortOrder}
+            priceRange={priceRange}
+            onPriceChange={setPriceRange}
+          />
+
           <ProductGrid
-            title={`${selectedCategory} Products`}
-            products={filteredProducts}
+            title="Products"
+            products={paginatedProducts}
+          />
+
+          <Pagination
+            current={currentPage}
+            total={total}
+            pageSize={pageSize}
+            onChange={setCurrentPage}
+            style={{ marginTop: 24, textAlign: "center" }}
           />
         </div>
       </Content>

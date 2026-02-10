@@ -1,0 +1,14 @@
+.sort-filter-bar {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.sort-select {
+  width: 200px;
+}
+
+.price-filter {
+  flex: 1;
+}
