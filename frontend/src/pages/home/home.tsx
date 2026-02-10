@@ -1,4 +1,4 @@
-import { Layout } from "antd";
+import { Layout, Pagination } from "antd";
 import CategoryNav from "../../components/CategoryNav/CategoryNav";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import { products } from "../../data/product";
@@ -11,7 +11,11 @@ const { Header, Content, Footer } = Layout;
 const Home = () => {
   const {
     categories,
-    filteredProducts,
+    paginatedProducts,
+    total,
+    currentPage,
+    pageSize,
+    setCurrentPage,
     selectedCategory,
     setSelectedCategory,
     sortOrder,
@@ -34,14 +38,22 @@ const Home = () => {
 
           <SortFilterBar
             sortOrder={sortOrder}
-            onSortChange={(value: string) => setSortOrder(value as "none" | "price-asc" | "price-desc")}
+            onSortChange={setSortOrder}
             priceRange={priceRange}
-            onPriceChange={(value: number[]) => setPriceRange(value as [number, number])}
+            onPriceChange={setPriceRange}
           />
 
           <ProductGrid
             title="Products"
-            products={filteredProducts}
+            products={paginatedProducts}
+          />
+
+          <Pagination
+            current={currentPage}
+            total={total}
+            pageSize={pageSize}
+            onChange={setCurrentPage}
+            style={{ marginTop: 24, textAlign: "center" }}
           />
         </div>
       </Content>
