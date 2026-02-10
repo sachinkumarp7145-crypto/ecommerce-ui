@@ -31,6 +31,12 @@ const ProductGrid = ({ title = "Products", products }: Props) => {
           </Col>
         ))}
       </Row>
+
+      {products.length === 0 && (
+        <div style={{ padding: 24, textAlign: "center" }}>
+          No products found
+        </div>
+      )}
     </div>
   );
 };

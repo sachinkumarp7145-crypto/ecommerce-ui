@@ -1,23 +1,24 @@
-import { useState } from "react";
 import { Layout } from "antd";
 import CategoryNav from "../../components/CategoryNav/CategoryNav";
+import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import { products } from "../../data/product";
+import { useProductFilters } from "../../hooks/useProductFilters";
 import "./home.scss";
-import ProductGrid from "../../components/productgrid/productgrid";
+import SortFilterBar from "../../components/sortfilterbar/sortFilterBar";
 
 const { Header, Content, Footer } = Layout;
 
-const categories = ["All", ...new Set(products.map(p => p.category))];
-
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-
-  const filteredProducts =
-    selectedCategory === "All"
-      ? products
-      : products.filter(
-          (product) => product.category === selectedCategory
-        );
+  const {
+    categories,
+    filteredProducts,
+    selectedCategory,
+    setSelectedCategory,
+    sortOrder,
+    setSortOrder,
+    priceRange,
+    setPriceRange,
+  } = useProductFilters(products);
 
   return (
     <Layout className="home-layout">
@@ -31,8 +32,15 @@ const Home = () => {
             onSelect={setSelectedCategory}
           />
 
+          <SortFilterBar
+            sortOrder={sortOrder}
+            onSortChange={(value: string) => setSortOrder(value as "none" | "price-asc" | "price-desc")}
+            priceRange={priceRange}
+            onPriceChange={(value: number[]) => setPriceRange(value as [number, number])}
+          />
+
           <ProductGrid
-            title={`${selectedCategory} Products`}
+            title="Products"
             products={filteredProducts}
           />
         </div>
