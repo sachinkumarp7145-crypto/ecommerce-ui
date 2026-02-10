@@ -1,13 +1,11 @@
 import { Select, Slider } from "antd";
 import "./sortFilterBar.scss";
 
-const { Option } = Select;
-
 interface Props {
   sortOrder: string;
   onSortChange: (value: string) => void;
   priceRange: [number, number];
-  onPriceChange: (value: number[]) => void;
+  onPriceChange: (value: [number, number]) => void;
 }
 
 const SortFilterBar = ({
@@ -23,9 +21,9 @@ const SortFilterBar = ({
         onChange={onSortChange}
         className="sort-select"
       >
-        <Option value="none">Sort By</Option>
-        <Option value="price-asc">Price: Low → High</Option>
-        <Option value="price-desc">Price: High → Low</Option>
+        <Select.Option value="none">Sort By</Select.Option>
+        <Select.Option value="price-asc">Price: Low → High</Select.Option>
+        <Select.Option value="price-desc">Price: High → Low</Select.Option>
       </Select>
 
       <div className="price-filter">
@@ -35,7 +33,9 @@ const SortFilterBar = ({
           min={0}
           max={10000}
           value={priceRange}
-          onChange={onPriceChange}
+          onChange={(value) =>
+        onPriceChange(value as [number, number])
+          }
         />
       </div>
     </div>
