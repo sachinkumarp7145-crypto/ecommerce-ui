@@ -12,7 +12,9 @@ const Home = () => {
       </Header>
 
       <Content className="home-content">
-        <ProductGrid />
+        <div style={{ width: "100%", maxWidth: 1200 }}>
+          <ProductGrid />
+        </div>
       </Content>
 
       <Footer className="home-footer">
