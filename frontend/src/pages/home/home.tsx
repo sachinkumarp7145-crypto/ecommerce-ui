@@ -1,7 +1,6 @@
 import { Layout, Pagination } from "antd";
 import CategoryNav from "../../components/CategoryNav/CategoryNav";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
-import { products } from "../../data/product";
 import { useProductFilters } from "../../hooks/useProductFilters";
 import "./home.scss";
 import SortFilterBar from "../../components/sortfilterbar/sortFilterBar";
@@ -11,7 +10,7 @@ const { Header, Content, Footer } = Layout;
 const Home = () => {
   const {
     categories,
-    paginatedProducts,
+    products,
     total,
     currentPage,
     pageSize,
@@ -22,7 +21,7 @@ const Home = () => {
     setSortOrder,
     priceRange,
     setPriceRange,
-  } = useProductFilters(products);
+  } = useProductFilters();
 
   return (
     <Layout className="home-layout">
@@ -45,7 +44,7 @@ const Home = () => {
 
           <ProductGrid
             title="Products"
-            products={paginatedProducts}
+            products={products}
           />
 
           <Pagination

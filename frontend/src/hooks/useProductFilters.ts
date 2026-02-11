@@ -1,9 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Product } from "../types/product";
+import { fetchProducts } from "../services/productService";
 
 const PAGE_SIZE = 4;
 
-export const useProductFilters = (products: Product[]) => {
+export const useProductFilters = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOrder, setSortOrder] =
     useState<"none" | "price-asc" | "price-desc">("none");
@@ -11,54 +15,55 @@ export const useProductFilters = (products: Product[]) => {
     useState<[number, number]>([0, 10000]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const categories = useMemo(
-    () => [
-      "all",
-      ...Array.from(
-        new Set(products.map((p) => (p.category ?? "").toLowerCase()))
-      ),
-    ],
-    [products]
-  );
+  // 🔹 Load from backend
+  useEffect(() => {
+    const loadProducts = async () => {
+      const params: Record<string, string | number> = {
+        page: currentPage,
+        limit: PAGE_SIZE,
+      };
 
-  const filteredProducts = useMemo(() => {
-    let result = [...products];
+      if (selectedCategory !== "all") {
+        params.category = selectedCategory;
+      }
 
-    if (selectedCategory !== "all") {
-      result = result.filter(
-        (p) => (p.category ?? "").toLowerCase() === selectedCategory
-      );
-    }
+      if (priceRange) {
+        params.minPrice = priceRange[0];
+        params.maxPrice = priceRange[1];
+      }
 
-    result = result.filter(
-      (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
-    );
+      if (sortOrder === "price-asc") {
+        params.sort = "price_asc";
+      }
 
-    if (sortOrder === "price-asc") {
-      result.sort((a, b) => a.price - b.price);
-    }
+      if (sortOrder === "price-desc") {
+        params.sort = "price_desc";
+      }
 
-    if (sortOrder === "price-desc") {
-      result.sort((a, b) => b.price - a.price);
-    }
+      const response = await fetchProducts(params);
 
-    return result;
-  }, [products, selectedCategory, sortOrder, priceRange]);
+      setProducts(response.data);
+      setTotal(response.pagination.total);
 
-  // 🔹 pagination slice
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredProducts.slice(start, start + PAGE_SIZE);
-  }, [filteredProducts, currentPage]);
+      // extract categories once
+      const uniqueCategories = [
+        "all",
+        ...Array.from(new Set(response.data.map((p) => p.category))),
+      ];
+      setCategories(uniqueCategories);
+    };
 
-  // reset page when filters change
+    loadProducts();
+  }, [currentPage, selectedCategory, sortOrder, priceRange]);
+
   const resetPage = () => setCurrentPage(1);
 
   return {
     categories,
-    paginatedProducts,
-    total: filteredProducts.length,
+    products,
+    total,
     currentPage,
     pageSize: PAGE_SIZE,
 
