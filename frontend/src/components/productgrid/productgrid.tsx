@@ -1,4 +1,4 @@
-import { Card, Row, Col } from "antd";
+import { Card, Row, Col, Rate } from "antd";
 import { Product } from "../../types/product";
 import "./productGrid.scss";
 
@@ -17,16 +17,32 @@ const ProductGrid = ({ title = "Products", products }: Props) => {
           <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
             <Card
               hoverable
+              className="amazon-card"
               cover={
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="product-image"
-                />
+                <div className="image-wrapper">
+                  <img
+                    src={product.image || "|| https://via.placeholder.com/200"}
+                    alt={product.title}
+                  />
+                </div>
               }
             >
-              <Card.Meta title={product.title} />
-              <div className="price">₹ {product.price}</div>
+              <div className="card-content">
+                <div className="product-title">
+                  {product.title}
+                </div>
+
+                <Rate
+                  disabled
+                  allowHalf
+                  defaultValue={product.rating}
+                  style={{ fontSize: 14 }}
+                />
+
+                <div className="price">
+                  ₹ {product.price}
+                </div>
+              </div>
             </Card>
           </Col>
         ))}
